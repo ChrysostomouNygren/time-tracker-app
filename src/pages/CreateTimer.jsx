@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Timer } from "timer-node";
 import { useTimeContext } from "../contexts/TimeContext";
 import axios from "axios";
 import { nanoid } from "nanoid";
-import { Alert, Button, Dropdown, Modal } from "react-bootstrap";
+import { Alert, Button, Dropdown, Modal, Navbar as Navi, Container } from "react-bootstrap";
 
 import Navbar from "../components/Navbar";
 
 function CreateTimer() {
-  const [time, setTime] = useState('')
+  const [time, setTime] = useState("");
   const { projects, setProjects } = useTimeContext();
   const { tasks, setTasks } = useTimeContext();
   const [label, setLabel] = useState("");
@@ -81,12 +81,11 @@ function CreateTimer() {
   }
 
   const save = () => {
-      saveToServer(label, project);
-      setOk(false);
-      console.log(`Time is set at ${time}`);
-      console.log(timer.format());
-      setTime('')
-    
+    saveToServer(label, project);
+    setOk(false);
+    console.log(`Time is set at ${time}`);
+    console.log(timer.format());
+    setTime("");
   };
 
   const handleClose = () => setShowModal(false);
@@ -94,7 +93,11 @@ function CreateTimer() {
 
   return (
     <div>
-      <h3>Timer</h3>
+          <Navi bg="light" variant="light" fixed="top">
+        <Container>
+          <Navi.Brand>Create and time</Navi.Brand>
+        </Container>
+      </Navi>
       {!ok ? (
         <div>
           <Button variant="secondary" onClick={handleShow}>
@@ -104,7 +107,6 @@ function CreateTimer() {
           {/* Modal to create */}
           <Modal show={showModal} onHide={handleClose}>
             <Modal.Header>
-              <Modal.Title>Modal heading</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               {/* Dropdown for prev projects */}
@@ -146,7 +148,9 @@ function CreateTimer() {
             <Modal.Footer>
               <Button
                 variant="secondary"
-                onClick={project && label ? () => [setOk(true), handleClose()] : null}
+                onClick={
+                  project && label ? () => [setOk(true), handleClose()] : null
+                }
               >
                 Save
               </Button>
@@ -169,27 +173,39 @@ function CreateTimer() {
             Stop
           </Button>
           <p>{time}</p>
-          <Button onClick={time ? () => [setShow(true)] : () => [setShow(true)]} variant="secondary">
+          <Button
+            onClick={time ? () => [setShow(true)] : () => [setShow(true)]}
+            variant="secondary"
+          >
             Save
           </Button>
           <Button onClick={clear} variant="secondary">
             Clear Time
           </Button>
-          <Button onClick={() => [setOk(false), setShowModal(false)]}>Back</Button>
-
+          <Button
+            onClick={() => [setOk(false), setShowModal(false)]}
+            variant="secondary"
+          >
+            Back
+          </Button>
 
           {/* Alert */}
           <Alert show={show} variant={!time ? "danger" : "success"}>
             <Alert.Heading>
-              <h4>{!time ? "Uh-oh!" : "Gr8 succes"}</h4>
-              <Button
-                onClick={
-                  !time ? () => setShow(false) : () => [setShow(false), save(), clear(), setOk(false)]
-                }
-                variant={!time ? "outline-danger" : "outline-success"}
-              >
-                X
-              </Button>
+              <h4>
+                {!time ? "Uh-oh!" : "Gr8 succes"}
+                <Button
+                  onClick={
+                    !time
+                      ? () => setShow(false)
+                      : () => [setShow(false), save(), clear(), setOk(false)]
+                  }
+                  variant={!time ? "outline-danger" : "outline-success"}
+                  style={{marginLeft: '6px'}}
+                >
+                  X
+                </Button>
+              </h4>
             </Alert.Heading>
             {!time ? <p>You cant save untimed stuff! :C</p> : <p>Saved AF</p>}
             <hr />
